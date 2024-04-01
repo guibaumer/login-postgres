@@ -74,6 +74,8 @@ export const LogUser = async (req, res) => {
         loggedIn: true,
     };
 
+    console.log(req.session.user);
+
     res.send('Usuário logado.');
 }
 
