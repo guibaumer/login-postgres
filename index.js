@@ -36,7 +36,7 @@ class App {
         maxAge: 1000 * 60 * 60 * 24 * 7, // One week
         // httpOnly: true,
         // secure: true, 
-        // sameSite: 'none', 
+        sameSite: 'none', 
       }
     }));
     this.app.use((req, res, next) => {
