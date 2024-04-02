@@ -30,13 +30,14 @@ class App {
         tableName: 'sessions'
       }),
       secret: process.env.SECRET,
-      resave: false,
+      resave: true,
+      // resave: false,
       saveUninitialized: false,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7, // One week
         // httpOnly: true,
-        secure: true, 
         sameSite: 'none', 
+        secure: true, 
       }
     }));
     this.app.use((req, res, next) => {
