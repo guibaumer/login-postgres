@@ -65,14 +65,19 @@ export const LogUser = async (req, res) => {
     if(!(await bcrypt.compare(password, user.password_hash))) return res.status(400).send('Senha incorreta.');
 
     if (req.session.user) {
+        console.log('Sessão já ativa.');
         return res.status(400).send('Já existe uma sessão ativa para este usuário.');
     }
 
-    req.session.user = {
-        user_id: user.id,
-        username: user.name,
-        loggedIn: true,
-    };
+    try {
+        req.session.user = {
+            user_id: user.id,
+            username: user.name,
+            loggedIn: true,
+        };
+    } catch (err) {
+        console.log('ERRO: ' + err);
+    }
 
     console.log(req.session.user);
 
