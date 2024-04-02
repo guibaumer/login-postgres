@@ -4,6 +4,7 @@ import userRoutes from './routes/userRouter.js';
 import session from 'express-session';
 import pgSession from 'connect-pg-simple';
 import * as dotenv from 'dotenv';
+import cors from 'cors';
 dotenv.config();
 
 class App {
@@ -42,7 +43,11 @@ class App {
     this.app.use((req, res, next) => {
       req.locals = req.locals || {};
       next();
-    })
+    });
+    app.use(cors({
+      origin: 'https://login-next.netlify.app',
+      credentials: true
+    }));
   }
 
     routes() {
