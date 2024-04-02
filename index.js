@@ -22,6 +22,7 @@ class App {
       res.setHeader('Access-Control-Allow-Credentials', 'true');
       next();
   });
+    this.app.enable('trust proxy'),  
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
     this.app.use(session({
@@ -30,8 +31,8 @@ class App {
         tableName: 'sessions'
       }),
       secret: process.env.SECRET,
-      resave: true,
-      // resave: false,
+      // resave: true,
+      resave: false,
       saveUninitialized: false,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7, // One week
