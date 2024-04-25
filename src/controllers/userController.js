@@ -55,18 +55,18 @@ export const CreateUser = async (req, res) => {
 export const LogUser = async (req, res) => {
     const { email, password } = req.body;
 
-    if(!email || !password) return res.status(400).send('Campos vazios');
-    if (!(validator.isEmail(email))) return res.status(400).send('Email inválido');
+    if(!email || !password) return res.status(400).send({message: 'Campos vazios'});
+    if (!(validator.isEmail(email))) return res.status(400).send({message: 'Email inválido'});
 
     const user = await User.findOne({ where: { email: email } });
 
-    if (!user) return res.status(400).send('Email não registrado.');
+    if (!user) return res.status(400).send({message: 'Email não registrado'});
 
-    if(!(await bcrypt.compare(password, user.password_hash))) return res.status(400).send('Senha incorreta.');
+    if(!(await bcrypt.compare(password, user.password_hash))) return res.status(400).send({message: 'Senha incorreta'});
 
     if (req.session.user) {
         console.log('Sessão já ativa.');
-        return res.status(400).send('Já existe uma sessão ativa para este usuário.');
+        return res.status(400).send({message: 'Já existe uma sessão ativa para este usuário.'});
     }
 
     try {
@@ -75,13 +75,12 @@ export const LogUser = async (req, res) => {
             username: user.name,
             loggedIn: true,
         };
+
+        res.send({message: 'Usuário logado', user: req.session.user});
     } catch (err) {
+        res.send({message: 'Erro ao logar'}).status(500);
         console.log('ERRO: ' + err);
     }
-
-    console.log(req.session.user);
-
-    res.send({message: 'Usuário logado', user: req.session.user});
 }
 
 export const Logout = async (req, res) => {

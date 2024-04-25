@@ -26,7 +26,7 @@ class App {
   });
     this.app.enable('trust proxy'),  
     this.app.options('*', (req, res) => {
-      res.status(200).end(); // Correctly respond to preflight
+      res.status(200).end();
     });
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
@@ -36,7 +36,6 @@ class App {
         tableName: 'sessions'
       }),
       secret: process.env.SECRET,
-      // resave: true,
       resave: false,
       saveUninitialized: false,
       cookie: {
