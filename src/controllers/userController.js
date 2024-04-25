@@ -19,12 +19,12 @@ export const CreateUser = async (req, res) => {
     if (req.session.user) errors.push('Saia de sua conta para poder criar um novo usuário');
 
     if (errors.length) {
-        return res.status(400).send(errors);
+        return res.send({errors: errors}).status(400);
     }
 
     const password_hash = await bcrypt.hash(password, 10);
 
-    if(!password_hash) return res.status(500).send('Error: try again later.');
+    if(!password_hash) return res.status(500).send({message: 'Error: try again later.'});
 
     const newUser = {
         name,
@@ -35,9 +35,9 @@ export const CreateUser = async (req, res) => {
     
     try {
         // User.create(newUser).then(() => res.send(newUser));
-        await User.create(newUser);
+        const justCreatedUser = await User.create(newUser);
 
-        const justCreatedUser = await User.findOne({ where: {email:email} })
+        // const justCreatedUser = await User.findOne({ where: {email:email} })
 
         req.session.user = {
             user_id: justCreatedUser.id,
@@ -45,9 +45,9 @@ export const CreateUser = async (req, res) => {
             loggedIn: true,
         }; 
 
-        res.send('Conta criada com sucesso');
+        res.send({message: 'Conta criada com sucesso', user: req.session.user});
     } catch(err) {
-        res.status(500).send('Erro ao criar usuário. Tente novamente mais tarde');
+        res.status(500).send({message: 'Erro ao criar usuário. Tente novamente mais tarde'});
         console.log(err);
     }
 }
@@ -81,7 +81,7 @@ export const LogUser = async (req, res) => {
 
     console.log(req.session.user);
 
-    res.send('Usuário logado.');
+    res.send({message: 'Usuário logado', user: req.session.user});
 }
 
 export const Logout = async (req, res) => {
@@ -114,5 +114,46 @@ export const FindSession = async (req, res) => {
         res.send(req.session.user);
     } else {
         res.status(404).send('Nenhuma sessão ativa');
+    }
+}
+
+export const EditUser = async (req, res) => {
+    if (!req.session.user) return res.send({message: 'Usuário não está logado'}).status(401);
+
+    console.log(req.session.user);
+
+    const { name, lastname } = req.body;
+
+    if (!name || !lastname) return res.send({message: 'Dados não enviados'}).status(400);
+
+    const errors = [];
+
+    if (name.length < 3) errors.push('Nome deve ser maior ou igual a 3 caracteres.');
+    if (lastname.length < 3) errors.push('Sobrenome deve ser maior ou igual a 3 caracteres.');
+
+    if (errors.length) {
+        return res.status(400).send({message: errors});
+    }
+    
+    try {
+        await User.update({ name: name, lastname: lastname }, { where: { id: req.session.user.user_id } });
+        res.send({message: 'Conta editada'});
+    } catch (err) {
+        res.send({ message: 'Erro ao editar usuário. Tente novamente mais tarde' }).status(500);
+        console.log(err);
+    }
+}
+
+export const getUser = async (req, res) => {
+    const { id } = req.body;
+
+    if (!id) return res.send({message: 'Falha ao editar'}).status(401);
+
+    const user = await User.findOne({ where: { id: id } });
+
+    if (user) {
+        return res.send({user: user});
+    } else {
+        return res.send({message: 'Falha ao editar. Tente novamente mais tarde.'}).status(500);
     }
 }

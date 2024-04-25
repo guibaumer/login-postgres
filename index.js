@@ -18,11 +18,16 @@ class App {
       // res.setHeader('Access-Control-Allow-Origin', ['https://localhost:3001']); 
       // res.setHeader('Access-Control-Allow-Origin', ['http://localhost:3001']); 
       res.setHeader('Access-Control-Allow-Origin', ['https://login-next.netlify.app']); 
+      res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+      res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS')
       res.setHeader('Access-Control-Allow-Headers', 'content-type');
       res.setHeader('Access-Control-Allow-Credentials', 'true');
       next();
   });
     this.app.enable('trust proxy'),  
+    this.app.options('*', (req, res) => {
+      res.status(200).end(); // Correctly respond to preflight
+    });
     this.app.use(express.urlencoded({ extended: true }));
     this.app.use(express.json());
     this.app.use(session({
@@ -36,7 +41,7 @@ class App {
       saveUninitialized: false,
       cookie: {
         maxAge: 1000 * 60 * 60 * 24 * 7, // One week
-        // httpOnly: true,
+        httpOnly: true,
         sameSite: 'none', 
         secure: true, 
       }

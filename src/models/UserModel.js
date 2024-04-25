@@ -10,6 +10,11 @@ export const User = sequelize.define(
       password_hash: Sequelize.STRING,
       created_at: Sequelize.DATE,
       updated_at: Sequelize.DATE,
+      id: {
+        type: Sequelize.INTEGER,
+        autoIncrement: true,
+        primaryKey: true,
+      },
     },
     {
       timestamps: false,
