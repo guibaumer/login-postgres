@@ -1,8 +1,9 @@
 import { Sequelize } from 'sequelize';
 
-export const sequelize = new Sequelize('login-next', 'login-next_owner', '7evoanbfXK5c', {
-    host: 'ep-bold-haze-a52kiv57.us-east-2.aws.neon.tech',
+export const sequelize = new Sequelize('pombal-db', 'pombal-db_owner', 'VPkaUWnKQ6Z5', {
+    host: 'ep-winter-dust-a59jb62y.us-east-2.aws.neon.tech',
     dialect: 'postgres',
+    timezone: 'America/Sao_Paulo',
     ssl: true,
     dialectOptions: {
     ssl: {
